@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Unit 3 - Task Management Simulator</title>
+
+<style>
+
+body{
+background:#020617;
+color:#e2e8f0;
+font-family:Arial;
+padding:30px;
+}
+
+h1{
+color:#38bdf8;
+}
+
+#console{
+background:black;
+color:#00ff00;
+font-family:Courier New;
+padding:20px;
+height:320px;
+overflow:auto;
+border:1px solid #00ff00;
+white-space:pre;
+}
+
+button{
+background:#0ea5e9;
+border:none;
+padding:12px;
+margin:6px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#0284c7;
+}
+
+.table{
+margin-top:20px;
+border-collapse:collapse;
+width:100%;
+}
+
+.table th{
+background:#1e293b;
+padding:10px;
+}
+
+.table td{
+padding:8px;
+border-bottom:1px solid #334155;
+}
+
+.top-bar{
+margin-bottom:20px;
+}
+
+.back-button{
+
+display:inline-block;
+padding:10px 18px;
+
+background:#000;
+color:#00ff00;
+
+border:2px solid #00ff00;
+
+text-decoration:none;
+font-family:Courier New, monospace;
+
+transition:0.2s;
+
+}
+
+.back-button:hover{
+
+background:#00ff00;
+color:#000;
+
+}
+
+
+.bellacosa-footer{
+
+background:#020617;
+padding:40px;
+margin-top:60px;
+color:#e2e8f0;
+
+}
+
+.bellacosa-footer h2{
+
+color:#38bdf8;
+margin-bottom:30px;
+
+}
+
+.footer-grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+
+}
+
+.footer-card{
+
+background:#020617;
+border:1px solid #1e293b;
+padding:20px;
+border-radius:10px;
+
+}
+
+.footer-card h3{
+
+color:#7dd3fc;
+margin-bottom:10px;
+
+}
+
+.follow-btn{
+
+display:inline-block;
+margin-top:15px;
+padding:10px 18px;
+background:#0ea5e9;
+color:white;
+text-decoration:none;
+border-radius:6px;
+font-weight:bold;
+
+}
+
+.follow-btn:hover{
+
+background:#0284c7;
+
+}
+
+.blog iframe{
+
+border-radius:6px;
+
+}
+
+.copyright{
+
+margin-top:40px;
+text-align:center;
+font-size:14px;
+color:#94a3b8;
+
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<button class="back-button" onclick="goBack()">← Voltar</button>
+<script>
+function goBack(){
+window.history.back()
+}
+</script>
+
+
+<h1>Mainframe Simulator</h1>
+
+<h2>Unit 3 - Task Management</h2>
+
+<p>Simulação do gerenciamento de tarefas no sistema.</p>
+
+<button onclick="createJob()">Submit Job</button>
+<button onclick="createTask()">Create Task</button>
+<button onclick="dispatch()">Dispatch Task</button>
+<button onclick="contextSwitch()">Context Switch</button>
+
+<div style="margin-top:25px">
+
+<h3>System Console</h3>
+
+<div id="console"></div>
+
+</div>
+
+<h3>Active Tasks</h3>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Task ID</th>
+<th>Status</th>
+<th>Priority</th>
+</tr>
+</thead>
+
+<tbody id="taskTable"></tbody>
+
+</table>
+
+<script>
+
+let tasks=[]
+let taskId=1
+
+function log(text){
+
+let consoleDiv=document.getElementById("console")
+
+consoleDiv.innerHTML+=text+"\n"
+
+consoleDiv.scrollTop=consoleDiv.scrollHeight
+
+}
+
+function updateTable(){
+
+let table=document.getElementById("taskTable")
+
+table.innerHTML=""
+
+tasks.forEach(t=>{
+
+let row="<tr><td>"+t.id+"</td><td>"+t.status+"</td><td>"+t.priority+"</td></tr>"
+
+table.innerHTML+=row
+
+})
+
+}
+
+function createJob(){
+
+log("Submitting job to JES queue")
+
+}
+
+function createTask(){
+
+let task={
+
+id:taskId++,
+status:"READY",
+priority:Math.floor(Math.random()*10)
+
+}
+
+tasks.push(task)
+
+log("Task "+task.id+" created")
+
+updateTable()
+
+}
+
+function dispatch(){
+
+let ready=tasks.filter(t=>t.status==="READY")
+
+if(ready.length===0){
+
+log("No tasks ready")
+
+return
+
+}
+
+let task=ready.sort((a,b)=>b.priority-a.priority)[0]
+
+task.status="RUNNING"
+
+log("Dispatcher selected Task "+task.id)
+
+updateTable()
+
+}
+
+function contextSwitch(){
+
+let running=tasks.find(t=>t.status==="RUNNING")
+
+if(!running){
+
+log("No running task")
+
+return
+
+}
+
+running.status="READY"
+
+log("Context switch executed")
+
+updateTable()
+
+}
+
+</script>
+
+<footer class="bellacosa-footer">
+
+<h2>Bellacosa Mainframe Network</h2>
+
+<div class="footer-grid">
+
+<!-- COMPANY -->
+
+<div class="footer-card">
+
+<h3>Bellacosa Mainframe</h3>
+
+<iframe src="https://www.linkedin.com/feed/update/urn:li:activity:7436637876433539072" height="578" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+
+<a href="https://www.linkedin.com/company/bellacosa-mainframe"
+target="_blank"
+class="follow-btn">Seguir</a>
+
+</div>
+
+
+<!-- NEWSLETTER -->
+
+<div class="footer-card">
+
+<h3>Newsletter</h3>
+
+<p>Um Café no Bellacosa Mainframe</p>
+
+<a href="https://www.linkedin.com/newsletters/um-caf%C3%A9-no-bellacosa-mainframe-7347385458416390144/"
+target="_blank"
+class="follow-btn">
+Acessar Newsletter
+</a>
+
+</div>
+
+
+<!-- COBOL LIFE -->
+
+<div class="footer-card">
+
+<h3>COBOL Life</h3>
+
+<p>Conteúdos dedicados ao universo COBOL e mainframe.</p>
+
+<a href="https://www.linkedin.com/showcase/cobol-life/"
+target="_blank"
+class="follow-btn">
+Seguir COBOL Life
+</a>
+
+</div>
+
+
+<!-- APRENDA -->
+
+<div class="footer-card">
+
+<h3>Aprenda no Bellacosa</h3>
+
+<p>Conteúdo educacional e laboratórios de mainframe.</p>
+
+<a href="https://www.linkedin.com/newsletters/aprenda-no-bellacosa-mainframe-7359389056255901697/"
+target="_blank"
+class="follow-btn">
+Acessar Newsletter
+</a>
+
+</div>
+
+
+<!-- BLOG -->
+
+<div class="footer-card blog">
+
+<h3>Último Post do Blog</h3>
+
+<iframe
+src="https://eljefemidnightlunch.blogspot.com"
+width="100%"
+height="260"
+frameborder="0">
+</iframe>
+
+<a href="https://eljefemidnightlunch.blogspot.com"
+target="_blank"
+class="follow-btn">
+Visitar Blog
+</a>
+
+</div>
+
+</div>
+
+<p class="copyright">
+© Bellacosa Mainframe
+</p>
+
+</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Bellacosa Mainframe TSO</title>
+
+<style>
+body{
+  background:#000;
+  margin:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:"Courier New", monospace;
+  position:relative;
+}
+
+/* ===== POST-IT ===== */
+
+.postit{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:#FFF59D;
+  color:#000;
+  padding:12px 14px;
+  font-family:"Comic Sans MS", cursive;
+  font-weight:bold;
+  text-transform:uppercase;
+  box-shadow:3px 5px 10px rgba(0,0,0,0.6);
+  transform:rotate(-6deg);
+  border-radius:4px;
+  z-index:10;
+}
+
+/* ===== TELA 3270 ===== */
+
+#screen{
+  width:80ch;
+  height:24em;
+  color:#00FF00;
+  background:#000;
+  padding:10px;
+  box-sizing:border-box;
+  white-space:pre;
+  line-height:1em;
+  border:2px solid #00FF00;
+}
+
+/* ===== CURSOR ===== */
+
+.cursor{
+  display:inline-block;
+  width:0.65ch;
+  height:1em;
+  background:#00FF00;
+  margin-left:2px;
+  animation:blink 1s steps(1) infinite;
+}
+
+@keyframes blink{
+  50%{ background:transparent; }
+}
+
+.error{ color:#FF4040; }
+</style>
+</head>
+
+<body>
+
+<div class="postit">
+USER-ID = SYSPROG<br>
+PASSWORD = SYS2026
+</div>
+
+<div id="screen"></div>
+
+<script>
+const screen = document.getElementById("screen");
+
+/* ===== SOM VINTAGE ===== */
+
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq=900, dur=0.03){
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.frequency.value = freq;
+  o.type = "square";
+  o.connect(g);
+  g.connect(ctx.destination);
+  g.gain.setValueAtTime(0.05, ctx.currentTime);
+  o.start();
+  o.stop(ctx.currentTime + dur);
+}
+
+/* ===== TELA ===== */
+
+const ascii = `
+Build an IBM Z Intelligent Enterprise
+
+      ____  _____ _     _      ___   ____   ___   ____   ___  
+     | __ )| ____| |   | |    / _ \\// ___|// _ \\ / ___|// _ \\ 
+     |  _ \|| _|  | |   | |   | |_| || |   | | | || |__ | |_| |
+     | |_) | |___| |___| |___| | | || |___| |_| |_|___|| | | | 
+     |____/|_____|_____|_____|\\_/\_//\\____| \\___/ \\____|\\_/\_// 
+ 
+               B E L L A C O S A   M a i n f r a m e
+
+                   IBM Z, The Next Generation
+ 
+              z/OS Runs the Economy of the World
+
+
+===> Enter "logon" followed by the TSO userid. Example "logon userid" or
+===> Enter TSO
+`;
+
+let buffer = "";
+
+/* ===== DESENHO ===== */
+
+function draw(message=""){
+  buffer = "";
+
+  screen.innerHTML =
+ascii +
+(message ? message + "\n" : "") +
+"\n===> <span id='cmd'></span><span class='cursor'></span>";
+
+  document.addEventListener("keydown", keyHandler);
+}
+
+/* ===== TECLADO ===== */
+
+function keyHandler(e){
+
+  if(e.key.length === 1){
+    buffer += e.key;
+    beep(950);
+  }
+
+  if(e.key === "Backspace"){
+    buffer = buffer.slice(0,-1);
+    beep(600);
+    e.preventDefault();
+  }
+
+  if(e.key === "Enter"){
+    beep(350,0.08);
+    process(buffer.trim());
+    return;
+  }
+
+  document.getElementById("cmd").textContent = buffer;
+}
+
+/* ===== PROCESSAMENTO ===== */
+
+function process(cmd){
+
+  const c = cmd.toLowerCase();
+
+  document.removeEventListener("keydown", keyHandler);
+
+  if(c === "logon" || c === "logon sysprog"){
+    window.location.href = "logon.html";
+    return;
+  }
+
+  draw(
+    "IKJ56700A INVALID COMMAND NAME\n" +
+    "IKJ56701I PLEASE ENTER LOGON"
+  );
+}
+
+draw();
+</script>
+
+</body>
+</html>

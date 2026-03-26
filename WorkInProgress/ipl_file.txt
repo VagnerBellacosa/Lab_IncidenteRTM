@@ -1,0 +1,91 @@
+
+#**********************************************************************************************
+#*****             Init IPL parameters config                                              *****
+#*****           Operating System z/OSv2r5                                                 *****
+#**********************************************************************************************
+***** without this dont work
+ARCHLVL  z/ARCH 
+FACILITY ENABLE 006_ASN_LX_REUSE
+FACILITY ENABLE 044_PFPO 
+FACILITY ENABLE 080_DFP_PACK_CONV
+**********
+* WARNING execute on command line before IPL/LOADPARM 
+* on hercules ---> 'FAC ENA 129' 
+*********
+#**FACILITY ENABLE 129_ZVECTOR
+***** without this dont work
+
+#TN3270 PORT master console works but TSO not maiybe IP ADDRESS?
+#Master console port for system messages
+SYSGPORT 3272
+#General Terminal for TSO
+CNSLPORT 3270
+CODEPAGE  DEFAULT
+CPUMODEL  8562       # CPU model number - Z15
+CPUSERIAL 02B7F8   # CPU serial number - Z15
+MODEL     T02 S03  # STSI returned Hardware model Capacity model - Z15
+CPUVERID  00
+ENGINES   CP,CP,AP,IP  
+          
+LOADPARM  DE28K2M.
+LOG       D:\MF\LOGS\logzOS
+LOGOPT    TIMESTAMP
+LPARNAME  VS01
+MAINSIZE  10G
+MANUFACTURER IBM
+NUMCPU    4
+MAXCPU    8 
+NUMTTY 4
+MODPATH   D:\MF\Hercules4_7
+OSTAILOR  z/OS
+PGMPRDOS  LICENSED 
+PLANT     02
+SYSEPOCH  1900
+TZOFFSET  -0300
+TIMERINT 400
+CONKPALV (3,1,10)
+#**********************************************************************************************
+#*****       LCS Adapters with z/OS                                                       *****
+#**********************************************************************************************
+#****0E20.2 LCS -n 192.168.43.35 192.168.43.225
+#**********************************************************************************************
+#*****         Reserved area to OS z/OS and products                                      *****
+#**********************************************************************************************
+DE24    3390   D:\zos25\ZFSVS1.CCKD cu=3990-6
+DE26    3390   D:\zos25\Z25VS1.CCKD cu=3990-6
+DE27    3390   D:\zos25\D25VS1.CCKD cu=3990-6
+DE28    3390   D:\zos25\OPEVS1.CCKD cu=3990-6
+DE29    3390   D:\zos25\STGVS1.CCKD cu=3990-6
+DE2A    3390   D:\zos25\JSPVS1.CCKD cu=3990-6
+DE2B    3390   D:\zos25\PRDVS1.CCKD cu=3990-6
+DE2C    3390   D:\zos25\JCKVS1.CCKD cu=3990-6
+DE00    3390   D:\zos25\USRVS1.CCKD cu=3990-6
+DE01    3390   D:\zos25\DEVVS1.CCKD cu=3990-6
+#**********************************************************************************************
+#*****                 Master (0060) and terms 3270 (0061)      see devmap                *****
+#**********************************************************************************************
+#master console
+0060    3270
+#TSO1 on devmap but dont working system IPL but IP and TN3270 port is not on same network????
+0061     3270
+#card reader to run jobs without tso
+000C    3505
+#Try put this but dont up too
+0700    3270
+0701    3270
+0702    1052
+#**********************************************************************************************
+#*****             SCRIPT TU RUN 'FAC ENA 129' AND IPL                                    *****
+#**********************************************************************************************
+script D:\MF\Confile\IPL25.rc
+# will rund this commands on file above
+# Hercules RUN-COMMANDS (RC) File
+#fac ena 129
+#pause 10
+#ipl DE27
+#pause 50
+#.v cn(*),activate
+#pause 20
+#.v 0060,console
+#pause 5
+#.d t
